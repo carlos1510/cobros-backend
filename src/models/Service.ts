@@ -53,6 +53,7 @@ export default (sequelize: Sequelize) => {
   }, {
     sequelize,
     modelName: 'Service',
+    tableName:'services',
   });
   return Service;
 };

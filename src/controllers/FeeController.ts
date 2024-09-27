@@ -1,19 +1,19 @@
 import { Request, Response } from 'express';
-import Company from '../models';
+import Fee from '../models';
 
-class CompanyController {
-    public async index(req: Request, res: Response): Promise<void> {
+class FeeController {
+    public async getFeeAll(req: Request, res: Response): Promise<void> {
         try {
-            const companies = await Company.findAll();
+            const fees = await Fee.findAll();
             res.status(200).json({
                 ok: true,
-                data: companies,
-                message: 'Compañías obtenidas correctamente.'
+                data: fees,
+                message: 'Cuotas obtenidas correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al obtener las compañías.',
+                message: 'Error al obtener las cuotas.',
                 error
             });
         }
@@ -21,17 +21,17 @@ class CompanyController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { name, description } = req.body;
-            const newCompany = await Company.create({ name, description });
+            const { amount, description } = req.body;
+            const newFee = await Fee.create({ amount, description });
             res.status(201).json({
                 ok: true,
-                data: newCompany,
-                message: 'Compañía creada correctamente.'
+                data: newFee,
+                message: 'Cuota creada correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al crear la compañía.',
+                message: 'Error al crear la cuota.',
                 error
             });
         }
@@ -40,17 +40,17 @@ class CompanyController {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const { name, description } = req.body;
-            const updatedCompany = await Company.update({ name, description }, { where: { id } });
+            const { amount, description } = req.body;
+            const updatedFee = await Fee.update({ amount, description }, { where: { id } });
             res.status(200).json({
                 ok: true,
-                data: updatedCompany,
-                message: 'Compañía actualizada correctamente.'
+                data: updatedFee,
+                message: 'Cuota actualizada correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al actualizar la compañía.',
+                message: 'Error al actualizar la cuota.',
                 error
             });
         }
@@ -59,19 +59,19 @@ class CompanyController {
     public async destroy(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            await Company.destroy({ where: { id } });
+            await Fee.destroy({ where: { id } });
             res.status(200).json({
                 ok: true,
-                message: 'Compañía eliminada correctamente.'
+                message: 'Cuota eliminada correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al eliminar la compañía.',
+                message: 'Error al eliminar la cuota.',
                 error
             });
         }
     }
 }
 
-export default CompanyController;
+export default FeeController;

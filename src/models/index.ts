@@ -3,6 +3,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Sequelize, Dialect } from 'sequelize';
 import * as process from 'process';
+
+import createServiceModel from './Service';
+import createClienteModel from './Client';
+import createCompanyModel from './Company';
+import createFeeModel from './Fee';
+import createCreditModel from './Credit';
+import createUserModel from './User';
+
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json');
@@ -45,6 +53,15 @@ fs
     db[model.name] = model;
   });
 
+// Initialize the Service model manually
+const Service = createServiceModel(sequelize);
+const Client = createClienteModel(sequelize);
+const Fee = createFeeModel(sequelize);
+const Credit = createCreditModel(sequelize);
+const Company = createCompanyModel(sequelize);
+const User = createUserModel(sequelize);
+//db['Service'] = Service;
+
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -55,3 +72,12 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 export default db;
+
+export { 
+  Service,
+  Client,
+  Fee,
+  Credit,
+  Company,
+  User
+};
