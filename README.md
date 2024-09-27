@@ -15,10 +15,9 @@ Instala las dependencias necesarias para el proyecto, mediante el comando npm in
     npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
 
   # Ejecutar la migracion
-    ```bash
+    
     npx sequelize-cli db:migrate
-    ```
-
+    
   # Des-hacer una Migración
     - Retroceder la última migración realizada:
       ```bash
