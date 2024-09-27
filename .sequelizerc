@@ -1,0 +1,10 @@
+const path = require('path');
+
+require('ts-node/register'); // Esto habilita el soporte para archivos .ts
+
+module.exports = {
+  'config': path.resolve('src/config', 'config.json'), // o config.js si sigues usando JS
+  'models-path': path.resolve('src/models'),
+  'seeders-path': path.resolve('src/seeders'),
+  'migrations-path': path.resolve('src/migrations')
+};
