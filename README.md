@@ -12,10 +12,12 @@ Instala las dependencias necesarias para el proyecto, mediante el comando npm in
   copia el archivo /src/config/configExample.json y pegas en la misma ruta, luego renombra como /src/config/config.json y agrega tus valores de conexion local para las migraciones
 
   # Generar modelo de migracion con sequelize
-  npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
+    npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
 
   # Ejecutar la migracion
-  npx sequelize-cli db:migrate
+    ```bash
+    npx sequelize-cli db:migrate
+    ```
 
   # Des-hacer una Migración
     - Retroceder la última migración realizada:
