@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
-import Fee from '../models';
+import Fee from '../models/Fee';
+import { where } from 'sequelize';
 
 class FeeController {
     public async getFeeAll(req: Request, res: Response): Promise<void> {
         try {
-            const fees = await Fee.findAll();
+            const fees = await Fee.findAll({ where: { state: true } });
+
             res.status(200).json({
                 ok: true,
                 data: fees,
@@ -21,8 +23,8 @@ class FeeController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { amount, description } = req.body;
-            const newFee = await Fee.create({ amount, description });
+            const { payDate, amount, remainingAmount, creditId, userId } = req.body;
+            const newFee = await Fee.create({ payDate, amount, remainingAmount, creditId, userId });
             res.status(201).json({
                 ok: true,
                 data: newFee,
@@ -40,8 +42,8 @@ class FeeController {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const { amount, description } = req.body;
-            const updatedFee = await Fee.update({ amount, description }, { where: { id } });
+            const { payDate, amount, remainingAmount } = req.body;
+            const updatedFee = await Fee.update({ payDate, amount, remainingAmount }, { where: { id } });
             res.status(200).json({
                 ok: true,
                 data: updatedFee,
@@ -74,4 +76,4 @@ class FeeController {
     }
 }
 
-export default FeeController;
+export default new FeeController();

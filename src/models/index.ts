@@ -2,44 +2,43 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Sequelize, Dialect } from 'sequelize';
-import * as process from 'process';
+import * as dotenv from 'dotenv';  // Importar dotenv
 
-import createServiceModel from './Service';
-import createClienteModel from './Client';
-import createCompanyModel from './Company';
-import createFeeModel from './Fee';
-import createCreditModel from './Credit';
-import createUserModel from './User';
+dotenv.config();  // Cargar las variables de entorno desde el archivo .env
 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json');
+const config = require(__dirname + '/../config/config.json')[env];
 
 const db: { [key: string]: any } = {};
 
-let sequelize: Sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env.DB_NAME!,
-    process.env.DB_USER!,
-    process.env.DB_PASSWORD!,
-    {
-        host: process.env.DB_HOST,
-        dialect: process.env.DB_DIALECT as Dialect || 'mysql',
-        port: Number(process.env.DB_PORT),
-        logging: console.log
-    }
-);
-} else {
-  sequelize = new Sequelize(
-    config.database as string,
-    config.username as string,
-    config.password as string,
-    config
-  );
+// Obtener el dialecto desde la variable de entorno
+const dialect = process.env.DB_DIALECT as Dialect;
+
+if (!dialect) {
+  throw new Error('El dialecto de la base de datos no está configurado correctamente. Asegúrate de definir DB_DIALECT en tu archivo .env.');
 }
 
-fs
-  .readdirSync(__dirname)
+let sequelize: Sequelize;
+
+// Verificar si se debe usar una variable de entorno para la configuración de la base de datos
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env.DB_NAME!, process.env.DB_USER!, process.env.DB_PASSWORD!, {
+    host: process.env.DB_HOST,
+    dialect: dialect,  // Aquí se pasa el dialecto
+    port: Number(process.env.DB_PORT),
+    logging: console.log,
+  });
+} else {
+  // Si no se usan variables de entorno, se usa la configuración de config.json
+  sequelize = new Sequelize(config.database, config.username, config.password, {
+    ...config, // Aquí se incluye la configuración de config.json
+    dialect: dialect, // Asegurar que se pasa el dialecto
+  });
+}
+
+// Cargar los modelos
+fs.readdirSync(__dirname)
   .filter((file: string) => {
     return (
       file.indexOf('.') !== 0 &&
@@ -49,18 +48,9 @@ fs
     );
   })
   .forEach((file: string) => {
-    const model = require(path.join(__dirname, file))(sequelize);
+    const model = require(path.join(__dirname, file));
     db[model.name] = model;
   });
-
-// Initialize the Service model manually
-const Service = createServiceModel(sequelize);
-const Client = createClienteModel(sequelize);
-const Fee = createFeeModel(sequelize);
-const Credit = createCreditModel(sequelize);
-const Company = createCompanyModel(sequelize);
-const User = createUserModel(sequelize);
-//db['Service'] = Service;
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
@@ -73,11 +63,3 @@ db.Sequelize = Sequelize;
 
 export default db;
 
-export { 
-  Service,
-  Client,
-  Fee,
-  Credit,
-  Company,
-  User
-};

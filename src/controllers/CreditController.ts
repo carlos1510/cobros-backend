@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import Credit from '../models';
+import Credit from '../models/Credit';
+import Client from '../models/Client';
 
 class CreditController { 
     public async index(req: Request, res: Response): Promise<void> { 
@@ -21,8 +22,16 @@ class CreditController {
     
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { clientId, userId, serviceId, amount } = req.body;
-            const newCredit = await Credit.create({ clientId, userId, serviceId, amount });
+            const { clientId, userId, serviceId, creditDate, amount, endDate, interestAmount, totalAmount, numberDocument, fullName, address, reference, phone } = req.body;
+
+            let clientIdNew = clientId;
+            const client = await Client.findOne({ where: { id: clientIdNew } });
+            if (!client) {
+                const newClient = await Client.create({ numberDocument, fullName, address, reference, phone });
+                clientIdNew = newClient?.id;
+            }
+            
+            const newCredit = await Credit.create({ creditDate, amount, endDate, interestAmount, totalAmount, clientId:clientIdNew, userId, serviceId });
             res.status(201).json({
                 ok: true,
                 data: newCredit,
@@ -75,4 +84,4 @@ class CreditController {
     }
 }
 
-export default CreditController;
+export default new CreditController();
