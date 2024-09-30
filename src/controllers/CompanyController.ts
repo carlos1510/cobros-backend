@@ -1,19 +1,20 @@
 import { Request, Response } from 'express';
-import Company from '../models';
+import Company from '../models/Company';
+import { where } from 'sequelize';
 
 class CompanyController {
     public async index(req: Request, res: Response): Promise<void> {
         try {
-            const companies = await Company.findAll();
+            const companies = await Company.findAll({where: {state: true}});
             res.status(200).json({
                 ok: true,
                 data: companies,
-                message: 'Compañías obtenidas correctamente.'
+                message: 'Empresas obtenidas correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al obtener las compañías.',
+                message: 'Error al obtener las Empresas.',
                 error
             });
         }
@@ -21,17 +22,17 @@ class CompanyController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { name, description } = req.body;
-            const newCompany = await Company.create({ name, description });
+            const { companyName, numberDocument, address, phone, userId } = req.body;
+            const newCompany = await Company.create({ companyName, numberDocument, address, phone, userId });
             res.status(201).json({
                 ok: true,
                 data: newCompany,
-                message: 'Compañía creada correctamente.'
+                message: 'Empresa creada correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al crear la compañía.',
+                message: 'Error al crear la Empresa.',
                 error
             });
         }
@@ -40,17 +41,17 @@ class CompanyController {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const { name, description } = req.body;
-            const updatedCompany = await Company.update({ name, description }, { where: { id } });
+            const { companyName, numberDocument, address, phone, userId } = req.body;
+            const updatedCompany = await Company.update({ companyName, numberDocument, address, phone, userId }, { where: { id } });
             res.status(200).json({
                 ok: true,
                 data: updatedCompany,
-                message: 'Compañía actualizada correctamente.'
+                message: 'Empresa actualizada correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al actualizar la compañía.',
+                message: 'Error al actualizar la Empresa.',
                 error
             });
         }
@@ -74,4 +75,4 @@ class CompanyController {
     }
 }
 
-export default CompanyController;
+export default new CompanyController();

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import Service from '../models';
+import Service from '../models/Service';
 
 class ServiceController {
     public async index(req: Request, res: Response): Promise<void> {
         try {
-            const services = await Service.findAll();
+            const services = await Service.findAll({where: {state: true}});
             res.status(200).json({
                 ok: true, 
                 data: services,
@@ -17,8 +17,8 @@ class ServiceController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { name, description, amount } = req.body;
-            const newService = await Service.create({ name, description, amount });
+            const { serviceName, period, porcentage, numberPeriod, companyId } = req.body;
+            const newService = await Service.create({ serviceName, period, porcentage, numberPeriod, companyId });
             res.status(201).json({
                 ok: true,
                 data: newService,
@@ -32,8 +32,8 @@ class ServiceController {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const { name, description, amount } = req.body;
-            const updatedService = await Service.update({ name, description, amount }, { where: { id } });
+            const { serviceName, period, porcentage, numberPeriod } = req.body;
+            const updatedService = await Service.update({ serviceName, period, porcentage, numberPeriod }, { where: { id } });
             res.status(200).json({ ok: true, data: updatedService, message: '' });
         } catch (error) {
             res.status(500).json({ ok: false, message: 'Error al actualizar el servicio.' });
@@ -54,4 +54,4 @@ class ServiceController {
     }
 }
 
-export default ServiceController;
+export default new ServiceController();

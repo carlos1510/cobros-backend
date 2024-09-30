@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import User from '../models';
+import { User } from '../models/User';
+import { hashPassword } from '../utils/auth';
 
 class UserController {
     public async getUsers(req: Request, res: Response): Promise<void> {
@@ -21,15 +22,29 @@ class UserController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
+            const {userName,numberDocument,fullName,phone,password,role} = req.body;
+            console.log(userName,numberDocument,fullName,phone,password,role);
+            const passwordHash = hashPassword(password);
+            console.log("hash: ", passwordHash);
+            const newUser = await User.create({
+                userName,
+                numberDocument,
+                fullName,
+                phone,
+                password: passwordHash,
+                role,
+                isActive: true,
+                state: true
+            });
             res.status(200).json({
                 ok: true,
-                data: null,
+                data: newUser,
                 message: 'Usuario registrado correctamente.'
             });
         } catch (error) {
             res.status(500).json({
                 ok: false,
-                message: 'Error al obtener los usuarios.',
+                message: 'Error al registrar el usuarios.',
                 error
             });
         }
@@ -58,6 +73,11 @@ class UserController {
             });
         }
     }
+
+    public async getUserName(userName: string) {
+        const user = await User.findOne({ where: { userName } });
+        return user;
+    }
 }
 
-export default UserController;
+export default new UserController();
