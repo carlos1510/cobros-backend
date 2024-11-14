@@ -4,7 +4,7 @@
     "module": "commonjs",   
     "strict": false,                             /* Specify what module code is generated. */
     "rootDir": "./src",                                  /* Specify the root folder within your source files. */                                /* Allow multiple folders to be treated as one when resolving modules. */                               /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
-    "outDir": "./build",                                   /* Specify an output folder for all emitted files. */           /* Allow 'import x from y' when a module doesn't have a default export. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */           /* Allow 'import x from y' when a module doesn't have a default export. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */                    /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
