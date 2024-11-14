@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
+import Credit from './Credit';
 
 export class Fee extends Model {
   public id!: number;
@@ -21,7 +22,7 @@ Fee.init({
     primaryKey: true,
   },
   payDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
   amount: {
@@ -62,5 +63,7 @@ Fee.init({
   modelName: 'Fee',
   tableName: 'fees',
 });
+
+Fee.belongsTo(Credit, { as: 'credit', foreignKey: 'creditId' });
 
 export default Fee;

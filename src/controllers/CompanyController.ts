@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import Company from '../models/Company';
-import { where } from 'sequelize';
 
 class CompanyController {
     public async index(req: Request, res: Response): Promise<void> {
@@ -60,7 +59,7 @@ class CompanyController {
     public async destroy(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            await Company.destroy({ where: { id } });
+            await Company.update({ state: false },{ where: { id } });
             res.status(200).json({
                 ok: true,
                 message: 'Compañía eliminada correctamente.'

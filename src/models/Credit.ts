@@ -1,6 +1,8 @@
 
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
+import Client from './Client';
+import Service from './Service';
 
 export class Credit extends Model {
   public id!: number;
@@ -25,7 +27,7 @@ Credit.init({
     primaryKey: true,
   },
   creditDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
     defaultValue: DataTypes.NOW,
   },
@@ -34,7 +36,7 @@ Credit.init({
     allowNull: false,
   },
   endDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: true,
   },
   interestAmount: {
@@ -85,5 +87,11 @@ Credit.init({
   modelName: 'Credit',
   tableName: 'credits',
 });
+
+// Aquí definimos la relación entre Credit y Client
+Credit.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
+//Client.hasMany(Credit, { foreignKey: 'clientId' });*/
+
+Credit.belongsTo(Service, { as: 'service', foreignKey: 'serviceId' });
 
 export default Credit;

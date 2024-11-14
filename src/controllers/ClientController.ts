@@ -113,20 +113,6 @@ class ClientController {
                     message: 'Cliente obtenido correctamente.'
                 });
             }
-            
-            // Define el token de autorización y el número de DNI
-            
-            /*const client = await Client.findOne({ where: { documentNumber: numberDocument, state: true } });
-            if (!client) {
-                res.status(404).json({ ok: false, message: 'No se encontró el cliente.' });
-            }*/
-
-            //apis-token-10722.3IDaHrk5Ym4wMW5llqDGQqFpASMEKikA
-            /*res.status(200).json({
-                ok: true,
-                data: client,
-                message: 'Cliente obtenido correctamente.'
-            });*/
         } catch (error) {
             res.status(500).json({ ok: false, message: 'Error al buscar el cliente.' + error });
         }

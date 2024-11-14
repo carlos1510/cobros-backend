@@ -17,6 +17,11 @@ export class Company extends Model {
   }
 }
 Company.init({
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   companyName: {
     type: DataTypes.STRING,
     allowNull: false,

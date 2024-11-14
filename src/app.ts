@@ -20,9 +20,14 @@ const app = express();
 
 const server = http.createServer(app);
 
+//Cors configuration
+
 const corsOptiones = {
   origin: process.env.ALLOWED_ORIGINS,
-  optionsSuccessStatus: 200,
+  credentials: true // Permitir el uso de credenciales
+  /*optionsSuccessStatus: 200,
+  methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
+  credentials: false*/
 };
 
 app.use(cors(corsOptiones));
@@ -52,29 +57,6 @@ app.use(cookieParser());
 
   next() // seguir a la siguiente ruta o middleware
 });*/
-
-const allowedOrigins = new Set(
-    (process.env.ALLOWED_ORIGINS ?? '').split(',').map(origin => origin.trim())
-);
-
-//Cors configuration
-/*app.use(cors({
-    origin: function(origin, callback) {
-      console.log('Request from origin:', origin);
-      // Permite solicitudes sin origen (aplicaciones móviles o curl)
-      if (!origin) return callback(null, true);
-  
-      if (!allowedOrigins.has(origin)) {
-        const msg = `CORS policy does not allow access from the specified origin: ${origin}`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
-    credentials: false
-}));*/
-
-
 
 // Exponer rutas
 const basePath = `/${API_NAME}/${API_VERSION}`;

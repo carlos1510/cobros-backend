@@ -34,7 +34,7 @@ class ServiceController {
             const { id } = req.params;
             const { serviceName, period, porcentage, numberPeriod } = req.body;
             const updatedService = await Service.update({ serviceName, period, porcentage, numberPeriod }, { where: { id } });
-            res.status(200).json({ ok: true, data: updatedService, message: '' });
+            res.status(200).json({ ok: true, data: updatedService, message: 'Servicio actualizado correctamente' });
         } catch (error) {
             res.status(500).json({ ok: false, message: 'Error al actualizar el servicio.' });
         }
@@ -43,7 +43,7 @@ class ServiceController {
     public async destroy(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            await Service.destroy({ where: { id } });
+            await Service.update({ state: false },{ where: { id } });
             res.status(200).json({
                 ok: true,
                 message: 'Servicio eliminado correctamente.'

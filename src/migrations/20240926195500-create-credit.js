@@ -18,7 +18,8 @@ module.exports = {
         allowNull: false,
       },
       endDate: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       interestAmount: {
         type: Sequelize.DOUBLE,
