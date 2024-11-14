@@ -11,7 +11,8 @@ async function testConnection() {
     } catch (error) {
       console.error('No se pudo conectar a la base de datos:', error);
     } finally {
-      await sequelize.close(); // Cierra la conexión después de probarla
+        console.log('Finalizando prueba de conexión.');
+      //await sequelize.close(); // Cierra la conexión después de probarla
     }
   }
 
