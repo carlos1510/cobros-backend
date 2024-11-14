@@ -6,11 +6,11 @@ import http from 'http';
 import cookieParser from 'cookie-parser';
 
 // Extender la interfaz de SessionData para incluir `user`
-declare module 'express-session' {
+/*declare module 'express-session' {
   interface SessionData {
     user: any; // Cambia 'any' por el tipo adecuado si sabes qué datos devuelve `jwt.verify`
   }
-}
+}*/
 
 const { JWT_SECRET } = process.env;
 
