@@ -5,6 +5,7 @@ import { hashPassword } from '../utils/auth';
 class UserController {
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
+            console.log("aqui");
             const users = await User.findAll({where: {state: true}});
             res.status(200).json({
                 ok: true,
@@ -12,6 +13,7 @@ class UserController {
                 message: 'Usuarios obtenidos correctamente.'
             });
         } catch (error) {
+            console.log(error);
             res.status(500).json({
                 ok: false,
                 message: 'Error al obtener los usuarios.',
