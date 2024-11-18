@@ -41,6 +41,7 @@ class AuthController {
             // Configuración para el refresh token si quieres que tenga una duración diferente
             const refreshCookieOptions = {
                 expires: new Date(Date.now() + Number(process.env.JWT_REFRESH_EXPIR_IN) * 24 * 60 * 60 * 1000), // Duración del refresh token
+                maxAge: 2880000, // 8 hora
                 //httpOnly: true,
                 secure: process.env.NODE_ENV === 'production'? true : false
             };
