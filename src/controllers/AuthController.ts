@@ -52,8 +52,8 @@ class AuthController {
             // Respuesta exitosa opcional
             res.status(200).json({
                 ok: true,
-                fecha_sevidor: new Date(),
-                fecha_expired: new Date(Date.now() + Number(process.env.JWT_COOKIE_EXPIR_IN) * 24 * 60 * 60 * 1000),
+                token,
+                refresh,
                 message: 'Tokens generados y almacenados en cookies correctamente'
             });
 
