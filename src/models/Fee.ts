@@ -1,6 +1,7 @@
 import { Model, DataTypes } from 'sequelize';
 import sequelize from '../config/database';
 import Credit from './Credit';
+import User from './User';
 
 export class Fee extends Model {
   public id!: number;
@@ -12,9 +13,13 @@ export class Fee extends Model {
   public state!: boolean;
 
   static associate(models: any) {
-    // define association here
+    // Define asociaciones aquí si es necesario
+    Fee.belongsTo(models.Credit, { as: 'credit', foreignKey: 'creditId' });
+    Fee.belongsTo(models.User, { as: 'user', foreignKey: 'userId' });
   }
 }
+
+// Inicialización del modelo
 Fee.init({
   id: {
     type: DataTypes.INTEGER,
@@ -37,7 +42,7 @@ Fee.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Credits',
+      model: Credit, // Usa directamente el modelo importado
       key: 'id',
     },
     onUpdate: 'CASCADE',
@@ -47,7 +52,7 @@ Fee.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Users',
+      model: User, // Usa directamente el modelo importado
       key: 'id',
     },
     onUpdate: 'CASCADE',
@@ -57,13 +62,16 @@ Fee.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true,
-  }
+  },
 }, {
   sequelize,
   modelName: 'Fee',
   tableName: 'fees',
+  timestamps: true, // Asegura que `createdAt` y `updatedAt` estén habilitados
 });
 
+// Asociaciones
 Fee.belongsTo(Credit, { as: 'credit', foreignKey: 'creditId' });
+Fee.belongsTo(User, { as: 'user', foreignKey: 'userId' });
 
 export default Fee;

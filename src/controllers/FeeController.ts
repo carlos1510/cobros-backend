@@ -48,7 +48,7 @@ class FeeController {
             
             const payDateNew = formatoFecha(payDate);
             console.log(payDateNew);
-            const newFee = await Fee.create({ payDate: payDateNew, amount: Number(amount), remainingAmount: 0, creditId, userId });
+            const newFee = await Fee.create({ payDate: payDateNew, amount: Number(amount), remainingAmount: restantAmount, creditId, userId });
 
             if (restantAmount === Number(amount)) {
                 await Credit.update({ state: 2 }, { where: { id: creditId } });
@@ -101,6 +101,26 @@ class FeeController {
             res.status(500).json({
                 ok: false,
                 message: 'Error al eliminar la cuota.',
+                error
+            });
+        }
+    }
+
+    public async findPaymentsByCredit(req: Request, res: Response): Promise<void> { 
+        try {
+            const { creditId } = req.params;
+            const fees = await Fee.findAll({ where: { state: true, creditId } });
+
+            res.status(200).json({
+                ok: true,
+                data: fees,
+                message: 'Cuotas obtenidas correctamente.'
+            });
+        } catch (error) {
+            res.status(500).json({
+                ok: false,
+                data: [],
+                message: 'Error no se pudo acceder a los datos.',
                 error
             });
         }
