@@ -6,6 +6,7 @@ import companyRoutes from './routes/companyRoutes';
 import serviceRoutes from './routes/serviceRoutes';
 import feeRoutes from './routes/feeRoutes';
 import creditRoutes from './routes/creditRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.use('/companies', companyRoutes);
 router.use('/services', serviceRoutes);
 router.use('/fees', feeRoutes);
 router.use('/credits', creditRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 
 export default router;
