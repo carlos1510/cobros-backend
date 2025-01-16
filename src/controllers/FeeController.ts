@@ -3,12 +3,13 @@ import Fee from '../models/Fee';
 import Credit from '../models/Credit';
 import Client from '../models/Client';
 import formatoFecha from '../utils/formatDate';
-import { Op } from 'sequelize';
+import { Op, QueryTypes, Sequelize } from 'sequelize';
+import sequelize from '../config/database';
 
 class FeeController {
     public async index(req: Request, res: Response): Promise<void> {
         try {
-            const payDate = req.params.payDate;
+            const payDate = req.query.payDate;
             
             const fees = await Fee.findAll({ where: { state: true, 
                     payDate
@@ -17,6 +18,20 @@ class FeeController {
                     {
                         model: Credit,
                         as: 'credit',
+                        attributes:[
+                            'totalAmount',
+                            [
+                                Sequelize.literal(`
+                                    IFNULL((
+                                        SELECT SUM(f1.amount) 
+                                        FROM fees f1 
+                                        WHERE f1.creditId = Credit.id AND f1.state = 1
+                                    ), 0)
+                                `),
+                                'totalPago'
+                            ],
+                        ],
+
                         include: [
                             {
                                 model: Client,
@@ -44,11 +59,31 @@ class FeeController {
 
     public async store(req: Request, res: Response): Promise<void> {
         try {
-            const { payDate, amount, creditId, userId, restantAmount } = req.body;
+            const { payDate, amount, creditId, userId } = req.body;
             
             const payDateNew = formatoFecha(payDate);
             console.log(payDateNew);
-            const newFee = await Fee.create({ payDate: payDateNew, amount: Number(amount), remainingAmount: restantAmount, creditId, userId });
+            const newFee = await Fee.create({ payDate: payDateNew, amount: Number(amount), remainingAmount: 0, creditId, userId });
+
+            const credit = await Credit.findOne({where: { id: creditId },
+                attributes: [
+                    'totalAmount',
+                    [
+                        Sequelize.literal(`
+                            IFNULL((
+                                SELECT SUM(f1.amount) 
+                                FROM fees f1 
+                                WHERE f1.creditId = Credit.id AND f1.state = 1
+                            ), 0)
+                        `),
+                        'totalPago'
+                    ],
+                ]
+            });
+
+            const restantAmount = Number(credit.totalAmount) - Number(credit.dataValues.totalPago);
+
+            await Fee.update({ remainingAmount: restantAmount }, { where: { id: newFee.id } });
 
             if (restantAmount === Number(amount)) {
                 await Credit.update({ state: 2 }, { where: { id: creditId } });
@@ -73,8 +108,36 @@ class FeeController {
     public async update(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const { payDate, amount, remainingAmount} = req.body;
-            const updatedFee = await Fee.update({ payDate, amount, remainingAmount }, { where: { id } });
+            const { payDate, amount, creditId} = req.body;
+
+            const updatedFee = await Fee.update({ payDate: formatoFecha(payDate), amount: Number(amount) }, { where: { id } });
+
+            const credit = await Credit.findOne({where: { id: creditId },
+                attributes: [
+                    'totalAmount',
+                    [
+                        Sequelize.literal(`
+                            IFNULL((
+                                SELECT SUM(f1.amount) 
+                                FROM fees f1 
+                                WHERE f1.creditId = Credit.id AND f1.state = 1
+                            ), 0)
+                        `),
+                        'totalPago'
+                    ],
+                ]
+            });
+
+            const restantAmount = Number(credit.totalAmount) - Number(credit.dataValues.totalPago);
+
+            await Fee.update({ remainingAmount: restantAmount }, { where: { id } });
+
+            if (restantAmount === Number(amount)) {
+                await Credit.update({ state: 2 }, { where: { id: creditId } });
+            }else {
+                await Credit.update({ state: 1 }, { where: { id: creditId } });
+            }
+            
             res.status(200).json({
                 ok: true,
                 data: updatedFee,

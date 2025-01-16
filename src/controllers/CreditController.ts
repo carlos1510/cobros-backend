@@ -5,10 +5,16 @@ import formatoFecha from '../utils/formatDate';
 import Service from '../models/Service';
 import { QueryTypes } from 'sequelize';
 import sequelize from '../config/database';
+import Company from '../models/Company';
 
 class CreditController { 
     public async index(req: Request, res: Response): Promise<void> { 
         try {
+            /*const { userId } = req.params;
+            const companie = await Company.findOne({where: {userId}});
+            if(!companie) {
+                res.status(400).json({ ok: false, data: [], message: 'No se ha encontrado una empresa asociada al usuario.' });
+            }*/
             const creditDate = req.params.creditDate;
             const credits = await Credit.findAll({
                 where: { state: 1, creditDate },
@@ -85,7 +91,26 @@ class CreditController {
                 await Client.update({ numberDocument, fullName, address, reference, phone }, { where: { id:clientIdNew } })
             }
 
-            const updatedCredit = await Credit.update({ creditDate, amount, endDate, interestAmount, totalAmount, clientId:clientIdNew, serviceId }, { where: { id } });
+            const creditDateNew = formatoFecha(creditDate); 
+            const endDateNew = formatoFecha(endDate); 
+
+            await Credit.update({ creditDate: creditDateNew, amount, endDate: endDateNew, interestAmount, totalAmount, clientId:clientIdNew, serviceId }, { where: { id } });
+
+            const updatedCredit = await Credit.findOne({
+                where: { id },
+                include: [
+                  {
+                    model: Client,
+                    as: 'client', // Asegúrate de usar el alias definido en la asociación
+                    attributes: ['numberDocument', 'fullName', 'address', 'reference', 'phone'],
+                  },
+                  {
+                    model: Service,
+                    as:'service', // Asegúrate de usar el alias definido en la asociación
+                    attributes: ['serviceName', 'period', 'porcentage', 'numberPeriod'],
+                  }
+                ],
+            });
             res.status(200).json({
                 ok: true,
                 data: updatedCredit,
