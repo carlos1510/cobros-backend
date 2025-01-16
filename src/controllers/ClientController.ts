@@ -5,6 +5,12 @@ import Client from '../models/Client';
 class ClientController {
     public async index(req: Request, res: Response): Promise<void> {
         try {
+            /*const { userId } = req.params;
+            const companie = await Company.findOne({where: {userId}});
+            if(!companie) {
+                res.status(400).json({ ok: false, data: [], message: 'No se ha encontrado una empresa asociada al usuario.' });
+            }*/
+
             const clients = await Client.findAll({ where: {state: true} });
             res.status(200).json({
                 ok: true,
@@ -60,6 +66,11 @@ class ClientController {
 
     public async searchByNumberDocument(req: Request, res: Response): Promise<void> {
         try {
+            /*const { userId } = req.params;
+            const companie = await Company.findOne({where: {userId}});
+            if(!companie) {
+                res.status(400).json({ ok: false, data: [], message: 'No se ha encontrado una empresa asociada al usuario.' });
+            }*/
             const { numberDocument } = req.params;
             const client = await Client.findOne({ where: { numberDocument: numberDocument } });
             if (!client) {

@@ -5,7 +5,12 @@ import { hashPassword } from '../utils/auth';
 class UserController {
     public async getUsers(req: Request, res: Response): Promise<void> {
         try {
-            console.log("aqui");
+            /*const { userId } = req.params;
+            const companie = await Company.findOne({where: {userId}});
+            if(!companie) {
+                res.status(400).json({ ok: false, data: [], message: 'No se ha encontrado una empresa asociada al usuario.' });
+            }*/
+           
             const users = await User.findAll({where: {state: true}});
             res.status(200).json({
                 ok: true,
