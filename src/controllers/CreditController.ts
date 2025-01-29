@@ -62,9 +62,24 @@ class CreditController {
             const endDateNew = formatoFecha(endDate);  // Formateo la fecha de fin de plazo para la base de datos
             
             const newCredit = await Credit.create({ creditDate: creditDateNew, amount, endDate: endDateNew, interestAmount, totalAmount, clientId:clientIdNew, userId, serviceId });
+            const credits = await Credit.findOne({
+                where: { id: newCredit.id },
+                include: [
+                  {
+                    model: Client,
+                    as: 'client', // Asegúrate de usar el alias definido en la asociación
+                    attributes: ['numberDocument', 'fullName', 'address', 'reference', 'phone'],
+                  },
+                  {
+                    model: Service,
+                    as:'service', // Asegúrate de usar el alias definido en la asociación
+                    attributes: ['serviceName', 'period', 'porcentage', 'numberPeriod'],
+                  }
+                ],
+              });
             res.status(201).json({
                 ok: true,
-                data: newCredit,
+                data: credits,
                 message: 'Crédito creado correctamente.'
             });
         } catch (error) {
