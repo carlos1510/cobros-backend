@@ -10,28 +10,29 @@ class FeeController {
     public async index(req: Request, res: Response): Promise<void> {
         try {
             const payDate = req.query.payDate;
-            
-            const fees = await Fee.findAll({ where: { state: true, 
+    
+            const fees = await Fee.findAll({
+                where: {
+                    state: true,
                     payDate
-                }, 
+                },
                 include: [
                     {
                         model: Credit,
                         as: 'credit',
-                        attributes:[
+                        attributes: [
                             'totalAmount',
                             [
                                 Sequelize.literal(`
                                     IFNULL((
                                         SELECT SUM(f1.amount) 
                                         FROM fees f1 
-                                        WHERE f1.creditId = Credit.id AND f1.state = 1
+                                        WHERE f1.creditId = \`credit\`.\`id\` AND f1.state = 1
                                     ), 0)
                                 `),
                                 'totalPago'
                             ],
                         ],
-
                         include: [
                             {
                                 model: Client,
@@ -42,7 +43,7 @@ class FeeController {
                     }
                 ]
             });
-
+    
             res.status(200).json({
                 ok: true,
                 data: fees,
